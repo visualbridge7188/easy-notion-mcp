@@ -351,12 +351,23 @@ function blockquoteToBlock(token: any, options: ConversionOptions): NotionBlock 
       ERROR: "❌",
     };
     const emoji = emojiMap[calloutType] ?? "💡";
+    const colorMap: Record<string, string> = {
+      NOTE: "blue_background",
+      TIP: "green_background",
+      WARNING: "yellow_background",
+      IMPORTANT: "purple_background",
+      INFO: "blue_background",
+      SUCCESS: "green_background",
+      ERROR: "red_background",
+    };
+    const calloutColor = colorMap[calloutType] ?? "gray_background";
 
     return {
       type: "callout",
       callout: {
         rich_text: blockTextToRichText(content, options),
         icon: { type: "emoji", emoji },
+        color: calloutColor,
       },
     };
   }

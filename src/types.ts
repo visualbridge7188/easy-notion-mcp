@@ -44,7 +44,7 @@ export type NotionBlock =
   | { type: "quote"; quote: { rich_text: RichText[] } }
   | {
       type: "callout";
-      callout: { rich_text: RichText[]; icon: { type: "emoji"; emoji: string } };
+      callout: { rich_text: RichText[]; icon: { type: "emoji"; emoji: string }; color?: string };
     }
   | { type: "equation"; equation: { expression: string } }
   | {
