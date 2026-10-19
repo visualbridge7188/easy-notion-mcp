@@ -1,8 +1,8 @@
 {
   "name": "easy-notion-mcp",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "mcpName": "io.github.misterwigglesworth/easy-notion",
-  "description": "Token-efficient, markdown-first Notion MCP server — agents write markdown, never touch raw Notion JSON",
+  "description": "Token-efficient, markdown-first Notion MCP server \u2014 agents write markdown, never touch raw Notion JSON",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -11,7 +11,6 @@
     "easy-notion-mcp-http": "dist/http.js"
   },
   "scripts": {
-    "prepare": "tsc",
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/index.js",

@@ -7,14 +7,22 @@ function applyAnnotations(text: string, richText: TextRichText): string {
   if (annotations.code) {
     result = `\`${result}\``;
   }
+  const highlight = annotations.color === "yellow_background" && annotations.bold && !annotations.code;
   if (annotations.bold) {
-    result = `**${result}**`;
+    if (highlight) {
+      result = `==${result}==`;
+    } else {
+      result = `**${result}**`;
+    }
   }
   if (annotations.italic) {
     result = `*${result}*`;
   }
   if (annotations.strikethrough) {
     result = `~~${result}~~`;
+  }
+  if (annotations.color && annotations.color !== "default" && annotations.color !== "gray" && !highlight) {
+    result = `{${annotations.color}}${result}{/${annotations.color}}`;
   }
   if (richText.text.link?.url) {
     result = `[${result}](${richText.text.link.url})`;
@@ -153,7 +161,14 @@ function renderBlock(block: NotionBlock, indent: number): string {
         "✅": "SUCCESS",
         "❌": "ERROR",
       };
-      const label = emojiToLabel[emoji ?? ""] ?? "NOTE";
+      // NOTE/TIP share 💡 and WARNING/IMPORTANT share ⚠️ — disambiguate by background color.
+      let label = emojiToLabel[emoji ?? ""] ?? "NOTE";
+      if (emoji === "💡" && block.callout.color === "green_background") {
+        label = "TIP";
+      }
+      if (emoji === "⚠️" && block.callout.color === "red_background") {
+        label = "IMPORTANT";
+      }
       const content = richTextToMarkdown(block.callout.rich_text)
         .split("\n")
         .map((line) => `${prefix}> ${line}`)

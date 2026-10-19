@@ -249,6 +249,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is a note")],
           icon: { type: "emoji", emoji: "💡" },
+          color: "default",
         },
       },
     ]);
@@ -260,7 +261,8 @@ describe("markdownToBlocks", () => {
         type: "callout",
         callout: {
           rich_text: [text("This is a tip")],
-          icon: { type: "emoji", emoji: "💚" },
+          icon: { type: "emoji", emoji: "💡" },
+          color: "green_background",
         },
       },
     ]);
@@ -273,6 +275,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is a warning")],
           icon: { type: "emoji", emoji: "⚠️" },
+          color: "yellow_background",
         },
       },
     ]);
@@ -284,7 +287,8 @@ describe("markdownToBlocks", () => {
         type: "callout",
         callout: {
           rich_text: [text("This is important")],
-          icon: { type: "emoji", emoji: "🔴" },
+          icon: { type: "emoji", emoji: "⚠️" },
+          color: "red_background",
         },
       },
     ]);
@@ -297,6 +301,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is info")],
           icon: { type: "emoji", emoji: "ℹ️" },
+          color: "blue_background",
         },
       },
     ]);
@@ -309,6 +314,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is success")],
           icon: { type: "emoji", emoji: "✅" },
+          color: "green_background",
         },
       },
     ]);
@@ -321,6 +327,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is error")],
           icon: { type: "emoji", emoji: "❌" },
+          color: "red_background",
         },
       },
     ]);
@@ -333,6 +340,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is a note")],
           icon: { type: "emoji", emoji: "💡" },
+          color: "default",
         },
       },
     ]);
@@ -344,7 +352,8 @@ describe("markdownToBlocks", () => {
         type: "callout",
         callout: {
           rich_text: [text("This is a tip")],
-          icon: { type: "emoji", emoji: "💚" },
+          icon: { type: "emoji", emoji: "💡" },
+          color: "green_background",
         },
       },
     ]);
@@ -357,6 +366,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is a warning")],
           icon: { type: "emoji", emoji: "⚠️" },
+          color: "yellow_background",
         },
       },
     ]);
@@ -368,7 +378,8 @@ describe("markdownToBlocks", () => {
         type: "callout",
         callout: {
           rich_text: [text("This is important")],
-          icon: { type: "emoji", emoji: "🔴" },
+          icon: { type: "emoji", emoji: "⚠️" },
+          color: "red_background",
         },
       },
     ]);
@@ -381,6 +392,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is info")],
           icon: { type: "emoji", emoji: "ℹ️" },
+          color: "blue_background",
         },
       },
     ]);
@@ -393,6 +405,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is success")],
           icon: { type: "emoji", emoji: "✅" },
+          color: "green_background",
         },
       },
     ]);
@@ -405,6 +418,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("This is error")],
           icon: { type: "emoji", emoji: "❌" },
+          color: "red_background",
         },
       },
     ]);
@@ -417,7 +431,8 @@ describe("markdownToBlocks", () => {
         type: "callout",
         callout: {
           rich_text: [text("Quick tip")],
-          icon: { type: "emoji", emoji: "💚" },
+          icon: { type: "emoji", emoji: "💡" },
+          color: "green_background",
         },
       },
     ]);
@@ -427,7 +442,8 @@ describe("markdownToBlocks", () => {
         type: "callout",
         callout: {
           rich_text: [text("Quick tip")],
-          icon: { type: "emoji", emoji: "💚" },
+          icon: { type: "emoji", emoji: "💡" },
+          color: "green_background",
         },
       },
     ]);
@@ -517,6 +533,7 @@ describe("markdownToBlocks", () => {
         callout: {
           rich_text: [text("Remember this")],
           icon: { type: "emoji", emoji: "💡" },
+          color: "default",
         },
       },
       {

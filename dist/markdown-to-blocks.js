@@ -153,7 +153,7 @@ function inlineTokensToRichText(tokens, annotations = {}, link, options = {}) {
                 break;
         }
     }
-    return richText;
+    return applyInlineColorNotation(richText);
 }
 /**
  * The inline lexer keeps a newline at the very start or end of the string inside
@@ -168,7 +168,56 @@ function trimBoundaryNewlines(text) {
 }
 export function blockTextToRichText(text, options = {}) {
     const input = options.collapseSoftWraps ? trimBoundaryNewlines(text) : text;
-    return inlineTokensToRichText(marked.Lexer.lexInline(input), {}, undefined, options);
+    return applyInlineColorNotation(inlineTokensToRichText(marked.Lexer.lexInline(input), {}, undefined, options));
+}
+const INLINE_COLOR_PATTERN = /==([^=\n]+)==|\{(gray|brown|orange|yellow|green|blue|purple|pink|red)(_background)?\}([^{}]*)\{\/\2\3\}/g;
+const HAS_INLINE_COLOR_HINT = /(==[^=\n]+==|\{[a-z]+(_background)?\}[^{}]*\{\/[a-z]+\})/;
+// Supports the team markdown dialect for inline colors:
+//   ==text==              -> bold + yellow_background highlight
+//   {red}text{/red}       -> red text (any Notion color, optional _background suffix)
+// Applied after the markdown lexer so code spans and links are never recolored.
+function applyInlineColorNotation(items) {
+    const out = [];
+    for (const item of items) {
+        if (item.type !== "text" || item.annotations?.code) {
+            out.push(item);
+            continue;
+        }
+        const content = item.text.content;
+        if (!HAS_INLINE_COLOR_HINT.test(content)) {
+            out.push(item);
+            continue;
+        }
+        INLINE_COLOR_PATTERN.lastIndex = 0;
+        let lastIndex = 0;
+        let matched = false;
+        for (const m of content.matchAll(INLINE_COLOR_PATTERN)) {
+            const start = m.index ?? 0;
+            if (start > lastIndex) {
+                out.push({ ...item, text: { ...item.text, content: content.slice(lastIndex, start) } });
+            }
+            const annotations = { ...(item.annotations ?? {}) };
+            if (m[1] !== undefined) {
+                annotations.bold = true;
+                annotations.color = "yellow_background";
+                out.push({ type: "text", text: { ...item.text, content: m[1] }, annotations });
+            }
+            else if (m[2] !== undefined) {
+                annotations.color = `${m[2]}${m[3] ?? ""}`;
+                out.push({ type: "text", text: { ...item.text, content: m[4] }, annotations });
+            }
+            lastIndex = start + m[0].length;
+            matched = true;
+        }
+        if (!matched) {
+            out.push(item);
+            continue;
+        }
+        if (lastIndex < content.length) {
+            out.push({ ...item, text: { ...item.text, content: content.slice(lastIndex) } });
+        }
+    }
+    return out;
 }
 function listItemToRichText(item, options) {
     const inlineTokens = [];
@@ -233,19 +282,19 @@ function blockquoteToBlock(token, options) {
         const content = (calloutMatch[2] ?? "").trim();
         const emojiMap = {
             NOTE: "💡",
-            TIP: "💚",
+            TIP: "💡",
             WARNING: "⚠️",
-            IMPORTANT: "🔴",
+            IMPORTANT: "⚠️",
             INFO: "ℹ️",
             SUCCESS: "✅",
             ERROR: "❌",
         };
         const emoji = emojiMap[calloutType] ?? "💡";
         const colorMap = {
-            NOTE: "blue_background",
+            NOTE: "default",
             TIP: "green_background",
             WARNING: "yellow_background",
-            IMPORTANT: "purple_background",
+            IMPORTANT: "red_background",
             INFO: "blue_background",
             SUCCESS: "green_background",
             ERROR: "red_background",
@@ -457,7 +506,7 @@ function tokenToBlocks(token, options) {
         case "space":
             return [];
         case "heading": {
-            const richText = inlineTokensToRichText(token.tokens ?? [], {}, undefined, options);
+            const richText = applyInlineColorNotation(inlineTokensToRichText(token.tokens ?? [], {}, undefined, options));
             if (token.depth === 1) {
                 return [{ type: "heading_1", heading_1: { rich_text: richText } }];
             }
