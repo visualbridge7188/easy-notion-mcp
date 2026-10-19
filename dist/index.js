@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+import "dotenv/config";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { createNotionClient } from "./notion-client.js";
+import { createServer } from "./server.js";
+async function main() {
+    const argv = process.argv.slice(2);
+    if (argv[0] === "init" || argv[0] === "setup") {
+        const { runInit } = await import("./cli/init.js");
+        process.exit(await runInit(argv.slice(1)));
+    }
+    const NOTION_TOKEN = process.env.NOTION_TOKEN;
+    if (!NOTION_TOKEN) {
+        console.error("NOTION_TOKEN is required");
+        process.exit(1);
+    }
+    const notion = createNotionClient(NOTION_TOKEN);
+    const server = createServer(() => notion, {
+        rootPageId: process.env.NOTION_ROOT_PAGE_ID,
+        trustContent: process.env.NOTION_TRUST_CONTENT === "true",
+        transport: "stdio",
+        workspaceRoot: process.env.NOTION_MCP_WORKSPACE_ROOT || process.cwd(),
+        // Reported by get_config. Decided here because this is the only place
+        // that still knows which of the two the value came from.
+        workspaceRootSource: process.env.NOTION_MCP_WORKSPACE_ROOT ? "env" : "cwd_default",
+    });
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error("easy-notion-mcp running on stdio — for HTTP clients, run easy-notion-mcp-http instead");
+}
+main().catch((error) => {
+    console.error("Fatal:", error);
+    process.exit(1);
+});
